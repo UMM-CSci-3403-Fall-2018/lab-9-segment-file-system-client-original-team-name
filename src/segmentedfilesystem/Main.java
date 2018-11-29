@@ -8,6 +8,14 @@ import java.util.HashMap;
 public class Main {
     private static HashMap<Integer,PacketContainer> packetMap = new HashMap<Integer, PacketContainer>();
 
+    private static boolean filesAreComplete(){
+        for(PacketContainer packetContainer : packetMap.values()){
+            if(!packetContainer.isComplete()){
+                return false;
+            }
+        }
+        return false;
+    }
 
     public static void main(String[] args) throws Exception{
         //Create socket
@@ -24,10 +32,10 @@ public class Main {
         //Request
         socket.send(packet);
 
-        //Reset packet??
+        //Reset packet
         packet = new DatagramPacket(buf, buf.length);
 
-        while(true){
+        while(!filesAreComplete()){
             socket.receive(packet);
             int packetID = packet.getData()[1];
             OurPacket ourPacket = new OurPacket(packet);
@@ -46,5 +54,11 @@ public class Main {
             //System.out.println("Quote of the Moment: " + received);
         }
 
+        //Generate files
+        for(PacketContainer packetContainer : packetMap.values()){
+            packetContainer.generateFile();
+        }
+
+        System.out.println("Packets were received.");
     }
 }
