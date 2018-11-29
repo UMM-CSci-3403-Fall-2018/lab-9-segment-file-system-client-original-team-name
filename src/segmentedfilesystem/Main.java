@@ -2,32 +2,49 @@ package segmentedfilesystem;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.ArrayList;
+import java.net.InetAddress;
+import java.util.HashMap;
 
 public class Main {
-    ArrayList<OurPacket> ourPackets = new ArrayList<OurPacket>();
+    private static HashMap<Integer,PacketContainer> packetMap = new HashMap<Integer, PacketContainer>();
+
 
     public static void main(String[] args) throws Exception{
+        //Create socket
+        DatagramSocket socket = new DatagramSocket();
 
-        //Create client Socket
-        DatagramSocket clientSocket = new DatagramSocket(6014);
+        //Setup request data
+        byte[] buf = new byte[1024];
+        InetAddress address = InetAddress.getByName("heartOfGold.morris.umn.edu");
+        int port = 6014;
 
-        //Package request data
-        byte[] receiveData = new byte[8];
-        String sendString = "polo";
-        byte[] sendData = sendString.getBytes("UTF-8");
-        DatagramPacket recievePacket = new DatagramPacket(receiveData,receiveData.length);
+        //Create request packet
+        DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
 
-        //Collect packets
+        //Request
+        socket.send(packet);
+
+        //Reset packet??
+        packet = new DatagramPacket(buf, buf.length);
+
         while(true){
-            clientSocket.receive(recievePacket);
+            socket.receive(packet);
+            int packetID = packet.getData()[1];
+            OurPacket ourPacket = new OurPacket(packet);
 
-            OurPacket ourPacket = new OurPacket(recievePacket);
+
+            if(packetMap.containsKey(packetID)) {
+                packetMap.get(packetID).addPacket(ourPacket);
+            }
+            else {
+                PacketContainer packetContainer = new PacketContainer();
+                packetMap.put(packetID,packetContainer);
+                packetContainer.addPacket(ourPacket);
+            }
+
+            //String received = new String(packet.getData(), 0, packet.getLength());
+            //System.out.println("Quote of the Moment: " + received);
         }
-    }
 
-    public void splitFilesApart(){
-        //Split ourPackets based on file
     }
-
 }
