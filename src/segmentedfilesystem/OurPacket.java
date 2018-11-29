@@ -2,7 +2,7 @@ package segmentedfilesystem;
 
 import java.net.DatagramPacket;
 
-public class OurPacket {
+public class OurPacket implements Comparable<OurPacket>{
     boolean isHeader;
     int packetNumber;
     byte[] contents;
@@ -25,7 +25,7 @@ public class OurPacket {
         }
     }
 
-
+    @Override
     public int compareTo(OurPacket packet){
         return packetNumber - packet.packetNumber;
     }
