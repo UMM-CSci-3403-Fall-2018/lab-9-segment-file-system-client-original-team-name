@@ -6,10 +6,10 @@ import java.net.InetAddress;
 import java.util.HashMap;
 
 public class Main {
-    private static HashMap<Integer,PacketContainer> packetMap = new HashMap<Integer, PacketContainer>();
+    private static HashMap<Integer,PacketContainer> packetContainerMap = new HashMap<Integer, PacketContainer>();
 
     private static boolean filesAreComplete(){
-        for(PacketContainer packetContainer : packetMap.values()){
+        for(PacketContainer packetContainer : packetContainerMap.values()){
             if(!packetContainer.isComplete()){
                 return false;
             }
@@ -18,6 +18,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception{
+        System.out.println("Starting client..");
         //Create socket
         DatagramSocket socket = new DatagramSocket();
 
@@ -35,19 +36,27 @@ public class Main {
         //Reset packet
         packet = new DatagramPacket(buf, buf.length);
 
+        System.out.println("Setup complete.");
+        System.out.println("Start receiving packets...");
+
+        int tracker = 0;
         while(!filesAreComplete()){
+            if(tracker%100==0){
+                System.out.println("Processed: " + tracker);
+            }
+            tracker++;
             socket.receive(packet);
             int packetID = packet.getData()[1];
             OurPacket ourPacket = new OurPacket(packet);
 
-
-            if(packetMap.containsKey(packetID)) {
-                packetMap.get(packetID).addPacket(ourPacket);
+            if(packetContainerMap.containsKey(packetID)) {
+                packetContainerMap.get(packetID).addPacket(ourPacket);
             }
             else {
                 PacketContainer packetContainer = new PacketContainer();
-                packetMap.put(packetID,packetContainer);
+                packetContainerMap.put(packetID,packetContainer);
                 packetContainer.addPacket(ourPacket);
+                System.out.println(" - - - new file found.");
             }
 
             //String received = new String(packet.getData(), 0, packet.getLength());
@@ -55,7 +64,7 @@ public class Main {
         }
 
         //Generate files
-        for(PacketContainer packetContainer : packetMap.values()){
+        for(PacketContainer packetContainer : packetContainerMap.values()){
             packetContainer.generateFile();
         }
 

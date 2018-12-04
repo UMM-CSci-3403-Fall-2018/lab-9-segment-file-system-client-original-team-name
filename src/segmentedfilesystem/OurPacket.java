@@ -6,16 +6,15 @@ public class OurPacket implements Comparable<OurPacket>{
     boolean isHeader;
     boolean isEnd;
     int packetNumber;
-    byte[] contents;
-    byte[] fileName;
+    byte[] contents = new byte[1024];
+    byte[] fileName = new byte[1024];
     int fileID;
 
     public OurPacket(DatagramPacket packet){
-        packet.getLength();
         byte[] data = packet.getData();
 
         this.isHeader = data[0]%2 == 0;
-        this.isEnd = data[0]%3 == 0;
+        this.isEnd = data[0]%4 == 3;
         this.fileID = data[1];
 
         if(isHeader){
@@ -23,9 +22,19 @@ public class OurPacket implements Comparable<OurPacket>{
                 fileName[i-2] = data[i];
             }
         } else {
-            this.packetNumber = data[2];
-            for(int i = 3; i < data.length; i ++){
-                contents[i-3] = data[i];
+            int a = data[2];
+            int b = data[3];
+            if(a<0){
+                a+= 256;
+            }
+            if(b<0){
+                b+=256;
+            }
+
+            this.packetNumber = a * 256 + b;
+
+            for(int i = 4; i < data.length; i ++){
+                contents[i-4] = data[i];
             }
         }
     }
