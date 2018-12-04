@@ -18,7 +18,7 @@ public class OurPacket implements Comparable<OurPacket>{
         this.fileID = data[1];
 
         if(isHeader){
-            for(int i = 2; i < data.length; i ++){
+            for(int i = 2; i < packet.getLength(); i ++){
                 fileName[i-2] = data[i];
             }
         } else {
@@ -30,10 +30,12 @@ public class OurPacket implements Comparable<OurPacket>{
             if(b<0){
                 b+=256;
             }
+            this.packetNumber = a*256 + b;
 
-            this.packetNumber = a * 256 + b;
+            // this.packetNumber = data[2] << 8 | data[3];
+            // System.out.println(packetNumber);
 
-            for(int i = 4; i < data.length; i ++){
+            for(int i = 4; i < packet.getLength(); i ++){
                 contents[i-4] = data[i];
             }
         }

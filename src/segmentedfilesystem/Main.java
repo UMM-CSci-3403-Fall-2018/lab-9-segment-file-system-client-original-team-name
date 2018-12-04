@@ -11,10 +11,11 @@ public class Main {
     private static boolean filesAreComplete(){
         for(PacketContainer packetContainer : packetContainerMap.values()){
             if(!packetContainer.isComplete()){
+                //System.out.println("Failure: " + packetContainer.id);
                 return false;
             }
         }
-        return false;
+        return packetContainerMap.size() != 0;
     }
 
     public static void main(String[] args) throws Exception{
@@ -63,8 +64,11 @@ public class Main {
             //System.out.println("Quote of the Moment: " + received);
         }
 
+        System.out.println("Starting to generate files...");
         //Generate files
         for(PacketContainer packetContainer : packetContainerMap.values()){
+            System.out.println("Handling: " + packetContainer.filename);
+
             packetContainer.generateFile();
         }
 
