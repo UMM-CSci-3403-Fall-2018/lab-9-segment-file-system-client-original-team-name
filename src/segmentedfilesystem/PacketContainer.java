@@ -1,6 +1,7 @@
 package segmentedfilesystem;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -19,12 +20,12 @@ public class PacketContainer {
 
         if(packet.isHeader){
             System.out.println("Header file found. "  + id);
-            filename = new String(packet.fileName).trim();
+            filename = new String(packet.fileName);
             foundHeader = true;
         }
 
-        if(packet.isEnd){
-            desiredPacketNumber = packet.packetNumber + 1;
+        if (packet.isEnd){
+            desiredPacketNumber = packet.packetNumber;
             System.out.println("Desired packet number callibrated. " + desiredPacketNumber + " " + id);
         }
 
@@ -33,7 +34,9 @@ public class PacketContainer {
             System.out.println("Desired packet number reached. "  + id);
         }
 
-        packetList.add(packet);
+        if(!packet.isHeader){
+            packetList.add(packet);
+        }
     }
 
     public boolean isComplete(){
@@ -41,9 +44,17 @@ public class PacketContainer {
     }
 
     public void generateFile(){
+        System.out.println("Attempting to generate: " + filename);
         Collections.sort(packetList);
-
+        try{
+            int i = 0;
+            FileOutputStream out = new FileOutputStream(filename);
+            for(OurPacket ourPacket : packetList){
+                out.write(ourPacket.contents);
+            }
+            out.close();
+        } catch(IOException e){
+            System.out.println(e);
+        }
     }
-
-
 }

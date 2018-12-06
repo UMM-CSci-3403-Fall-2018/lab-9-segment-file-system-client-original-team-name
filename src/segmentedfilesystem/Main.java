@@ -59,9 +59,6 @@ public class Main {
                 packetContainer.addPacket(ourPacket);
                 System.out.println(" - - - new file found.");
             }
-
-            //String received = new String(packet.getData(), 0, packet.getLength());
-            //System.out.println("Quote of the Moment: " + received);
         }
 
         System.out.println("Starting to generate files...");
