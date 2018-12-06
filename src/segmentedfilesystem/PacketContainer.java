@@ -47,10 +47,11 @@ public class PacketContainer {
         System.out.println("Attempting to generate: " + filename);
         Collections.sort(packetList);
         try{
-            int i = 0;
             FileOutputStream out = new FileOutputStream(filename);
             for(OurPacket ourPacket : packetList){
+                ///out.write("<<<".getBytes());
                 out.write(ourPacket.contents);
+                ///out.write(">>>".getBytes());
             }
             out.close();
         } catch(IOException e){

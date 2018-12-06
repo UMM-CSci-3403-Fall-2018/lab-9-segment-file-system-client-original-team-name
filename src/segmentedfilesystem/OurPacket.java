@@ -34,8 +34,8 @@ public class OurPacket implements Comparable<OurPacket>{
             this.packetNumber = a*256 + b;
 
             this.contents = new byte[packet.getLength() - 4];
-            for(int i = 4; i < packet.getLength(); i ++){
-                contents[i-4] = data[i];
+            for(int i = 0; i < packet.getLength() - 4; i ++){
+                contents[i] = data[i + 4];
             }
         }
     }

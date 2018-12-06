@@ -24,7 +24,7 @@ public class Main {
         DatagramSocket socket = new DatagramSocket();
 
         //Setup request data
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[1028];
         InetAddress address = InetAddress.getByName("heartOfGold.morris.umn.edu");
         int port = 6014;
 
